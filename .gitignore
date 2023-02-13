@@ -8,3 +8,5 @@ build/
 *.cpp
 /trash/
 !.gitkeep
+.idea
+

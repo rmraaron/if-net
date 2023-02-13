@@ -29,7 +29,7 @@ def gen_iterator(out_path, dataset, gen_p):
 
 
         path = os.path.normpath(data['path'][0])
-        export_path = out_path + '/generation/{}/{}/'.format(path.split(os.sep)[-2], path.split(os.sep)[-1])
+        export_path = out_path + '/generation/{}/{}_reconstruction.off'.format(path.split(os.sep)[-2], path.split(os.sep)[-1])
 
 
         if os.path.exists(export_path):
@@ -65,12 +65,12 @@ def save_mesh(data_tupel):
     mesh = gen.mesh_from_logits(logits)
 
     path = os.path.normpath(data['path'][0])
-    export_path = out_path + '/generation/{}/{}/'.format(path.split(os.sep)[-2], path.split(os.sep)[-1])
+    export_path = out_path + '/generation/{}/{}_reconstruction.off'.format(path.split(os.sep)[-2], path.split(os.sep)[-1])
 
     if not os.path.exists(export_path):
         os.makedirs(export_path)
 
-    mesh.export(export_path + 'surface_reconstruction.off')
+    mesh.export(export_path)
 
 def create_meshes(data_tupels):
     p = Pool(mp.cpu_count())
