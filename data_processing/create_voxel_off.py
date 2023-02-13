@@ -11,8 +11,8 @@ import argparse
 def create_voxel_off(path):
 
 
-    voxel_path = path + '/voxelization_{}.npy'.format( res)
-    off_path = path + '/voxelization_{}.off'.format( res)
+    voxel_path = path + '/00529.voxelization_{}.npy'.format(res)
+    off_path = path + '/00529.voxelization_{}.off'.format(res)
 
 
     if unpackbits:
@@ -37,11 +37,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Run voxalization to off'
     )
-    parser.add_argument('-res', type=int)
+    parser.add_argument('-res', default=32, type=int)
 
     args = parser.parse_args()
 
-    ROOT = 'shapenet/data'
+    ROOT = '/shared/storage/cs/staffstore/yg1390/HEADSPACE_PREPROCESSED/WoNeck/00529/'
 
     unpackbits = True
     res = args.res
@@ -49,4 +49,4 @@ if __name__ == '__main__':
     max = 0.5
 
     p = Pool(mp.cpu_count())
-    p.map(create_voxel_off, glob.glob( ROOT + '/*/*/'))
+    p.map(create_voxel_off, glob.glob( ROOT))

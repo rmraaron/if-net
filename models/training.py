@@ -70,7 +70,7 @@ class Trainer(object):
             train_data_loader = self.train_dataset.get_loader()
 
             if epoch % 1 == 0:
-                self.save_checkpoint(epoch)
+                # self.save_checkpoint(epoch)
                 val_loss = self.compute_val_loss()
 
                 if self.val_min is None:
@@ -81,10 +81,12 @@ class Trainer(object):
                     for path in glob(self.exp_path + 'val_min=*'):
                         os.remove(path)
                     np.save(self.exp_path + 'val_min={}'.format(epoch),[epoch,val_loss])
-
+                    self.save_checkpoint(epoch)
 
                 self.writer.add_scalar('val loss batch avg', val_loss, epoch)
 
+            if (epoch + 1) % 50 == 0:
+                self.save_checkpoint(epoch)
 
             for batch in train_data_loader:
                 loss = self.train_step(batch)

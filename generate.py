@@ -23,6 +23,7 @@ parser.add_argument('-retrieval_res' , default=256, type=int)
 parser.add_argument('-checkpoint', type=int)
 parser.add_argument('-batch_points', default=1000000, type=int)
 parser.add_argument('-m','--model' , default='LocNet', type=str)
+parser.add_argument('-batch_size', default=16, type=int)
 
 args = parser.parse_args()
 
@@ -49,10 +50,10 @@ dataset = voxelized_data.VoxelizedDataset(args.mode, voxelized_pointcloud= args.
                                           sample_sigmas=args.sample_sigmas ,num_sample_points=100, batch_size=1, num_workers=0)
 
 
-exp_name = 'i{}_dist-{}sigmas-{}v{}_m{}'.format(  'PC' + str(args.pc_samples) if args.pointcloud else 'Voxels',
+exp_name = 'i{}_dist-{}sigmas-{}v{}_m{}_{}'.format(  'PC' + str(args.pc_samples) if args.pointcloud else 'Voxels',
                                     ''.join(str(e)+'_' for e in args.sample_distribution),
                                        ''.join(str(e) +'_'for e in args.sample_sigmas),
-                                                                args.res,args.model)
+                                                                args.res,args.model, args.batch_size)
 
 
 gen = Generator(net,0.5, exp_name, checkpoint=args.checkpoint ,resolution=args.retrieval_res, batch_points=args.batch_points)

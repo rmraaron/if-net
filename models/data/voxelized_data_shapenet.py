@@ -6,13 +6,29 @@ import pickle
 import imp
 import trimesh
 import torch
+import json
+
+
+def get_subject_names(data_source, split):
+    subject_names = []
+    for class_name in split:
+        for instance_name in split[class_name]:
+            if not os.path.exists(
+                    os.path.join(data_source, instance_name)
+            ):
+                logging.warning(
+                    "Requested non-existent directories '{}'".format(os.path.join(data_source, instance_name))
+                )
+            else:
+                subject_names.append(instance_name)
+    return subject_names
 
 
 
 class VoxelizedDataset(Dataset):
 
 
-    def __init__(self, mode, res = 32,  voxelized_pointcloud = False, pointcloud_samples = 3000, data_path = 'shapenet/data/', split_file = 'shapenet/split.npz',
+    def __init__(self, mode, res = 32,  voxelized_pointcloud = False, pointcloud_samples = 3000, data_path = '/shared/storage/cs/staffstore/yg1390/HEADSPACE_PREPROCESSED/WoNeck/', split_file = '../headspace_sdf/splits/',
                  batch_size = 64, num_sample_points = 1024, num_workers = 12, sample_distribution = [1], sample_sigmas = [0.015], **kwargs):
 
         self.sample_distribution = np.array(sample_distribution)
@@ -23,9 +39,22 @@ class VoxelizedDataset(Dataset):
         assert len(self.sample_distribution) == len(self.sample_sigmas)
 
         self.path = data_path
-        self.split = np.load(split_file)
 
-        self.data = self.split[mode]
+        if mode == "val":
+            with open(os.path.join(split_file, "headspace_train.json"), "r") as f:
+                self.splits = json.load(f)
+        else:
+            with open(os.path.join(split_file, "headspace_{}.json".format(mode)), "r") as f:
+                self.splits = json.load(f)
+
+        self.data = get_subject_names(self.path, self.splits)
+
+        # (training set + val set) : test set = 9:1, training set : val set = 9:1
+        if mode == "train":
+            self.data = self.data[:int(len(self.data)*0.9)]
+        elif mode == "val":
+            self.data = self.data[int(len(self.data)*0.9):]
+
         self.res = res
 
         self.num_sample_points = num_sample_points
@@ -46,7 +75,7 @@ class VoxelizedDataset(Dataset):
         path = self.path + self.data[idx]
 
         if not self.voxelized_pointcloud:
-            occupancies = np.load(path + '/voxelization_{}.npy'.format(self.res))
+            occupancies = np.load(path + '/{}.voxelization_{}.npy'.format(self.data[idx], self.res))
             occupancies = np.unpackbits(occupancies)
             input = np.reshape(occupancies, (self.res,)*3)
         else:

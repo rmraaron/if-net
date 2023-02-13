@@ -49,10 +49,10 @@ val_dataset = voxelized_data.VoxelizedDataset('val', voxelized_pointcloud= args.
 
 
 
-exp_name = 'i{}_dist-{}sigmas-{}v{}_m{}'.format(  'PC' + str(args.pc_samples) if args.pointcloud else 'Voxels',
+exp_name = 'i{}_dist-{}sigmas-{}v{}_m{}_{}'.format(  'PC' + str(args.pc_samples) if args.pointcloud else 'Voxels',
                                     ''.join(str(e)+'_' for e in args.sample_distribution),
                                        ''.join(str(e) +'_'for e in args.sample_sigmas),
-                                                                args.res,args.model)
+                                                                args.res,args.model, args.batch_size)
 
-trainer = training.Trainer(net,torch.device("cuda"),train_dataset, val_dataset,exp_name, optimizer=args.optimizer)
+trainer = training.Trainer(net, torch.device("cuda"),train_dataset, val_dataset, exp_name, optimizer=args.optimizer)
 trainer.train_model(1500)
