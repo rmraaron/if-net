@@ -20,6 +20,7 @@ parser.add_argument('-batch_size' , default=30, type=int)
 parser.add_argument('-res' , default=32, type=int)
 parser.add_argument('-m','--model' , default='LocNet', type=str)
 parser.add_argument('-o','--optimizer' , default='Adam', type=str)
+parser.add_argument('-epochs' , default=1500, type=int)
 
 try:
     args = parser.parse_args()
@@ -40,7 +41,6 @@ if args.model == 'SVR':
     net = model.SVR()
 
 
-
 train_dataset = voxelized_data.VoxelizedDataset('train', voxelized_pointcloud= args.pointcloud, pointcloud_samples= args.pc_samples, res=args.res, sample_distribution=args.sample_distribution,
                                           sample_sigmas=args.sample_sigmas ,num_sample_points=50000, batch_size=args.batch_size, num_workers=30)
 
@@ -55,4 +55,4 @@ exp_name = 'i{}_dist-{}sigmas-{}v{}_m{}_{}'.format(  'PC' + str(args.pc_samples)
                                                                 args.res,args.model, args.batch_size)
 
 trainer = training.Trainer(net, torch.device("cuda"),train_dataset, val_dataset, exp_name, optimizer=args.optimizer)
-trainer.train_model(1500)
+trainer.train_model(args.epochs)
