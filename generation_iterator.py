@@ -65,12 +65,13 @@ def save_mesh(data_tupel):
     mesh = gen.mesh_from_logits(logits)
 
     path = os.path.normpath(data['path'][0])
-    export_path = out_path + '/generation/{}/{}_reconstruction.off'.format(path.split(os.sep)[-2], path.split(os.sep)[-1])
+    export_path = out_path + '/generation/{}/'.format(path.split(os.sep)[-2])
 
     if not os.path.exists(export_path):
         os.makedirs(export_path)
 
-    mesh.export(export_path)
+    mesh.export(export_path + "/{}_reconstruction.off".format(path.split(os.sep)[-1]))
+    print("Path saved - {}.".format(export_path + "/{}_reconstruction.off".format(path.split(os.sep)[-1])))
 
 def create_meshes(data_tupels):
     p = Pool(mp.cpu_count())
